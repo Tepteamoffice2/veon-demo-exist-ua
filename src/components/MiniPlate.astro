@@ -1,0 +1,24 @@
+---
+// Compact repeat of the number plate ("номер — ключ"). mode "link": the whole plate is an anchor to the search;
+// mode "field": a visual input with an inactive search button (FutureLink) and a hint, like the hero plate.
+import Icon from "./Icon.astro";
+import FutureLink from "./FutureLink.astro";
+interface Props { mode: "link" | "field"; id?: string; hint?: string; dark?: boolean; }
+const { mode, id = "q-plate-mini", hint, dark = false } = Astro.props;
+const NOTE = "Пошук запрацює в повній версії сайту";
+---
+{mode === "link" ? (
+  <a class:list={["mplate", "mplate--link", { "mplate--dark": dark }]} href="#poshuk">
+    <span class="mplate__strip" aria-hidden="true"><span class="plate__flag"></span><span class="mplate__code">UA</span></span>
+    <span class="mplate__text" aria-hidden="true">АА 0000 АА</span>
+    <span class="mplate__go"><span>Підібрати за номером</span><Icon name="arrow" size={20} /></span>
+  </a>
+) : (
+  <div class:list={["mplate", { "mplate--dark": dark }]}>
+    <span class="mplate__strip" aria-hidden="true"><span class="plate__flag"></span><span class="mplate__code">UA</span></span>
+    <label class="visually-hidden" for={id}>Держномер авто</label>
+    <input class="mplate__input" id={id} type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="АА 0000 АА" aria-describedby={hint ? `${id}-hint` : undefined} />
+    <FutureLink class="plate__go mplate__btn" note={NOTE}><Icon name="search" size={20} /><span class="plate__go-text">Знайти</span></FutureLink>
+  </div>
+)}
+{mode === "field" && hint && <p class="mplate__hint" id={`${id}-hint`}>{hint}</p>}

@@ -1,0 +1,87 @@
+---
+import Logo from "./Logo.astro";
+import Icon from "./Icon.astro";
+import FutureLink from "./FutureLink.astro";
+import { nav, utility, mainPhone, phones, hours, SOON } from "../data/site";
+const shop = [
+  { label: "Гараж", icon: "garage" },
+  { label: "Кабінет", icon: "user" },
+  { label: "Кошик", icon: "cart" },
+] as const;
+---
+<header class="site-header" data-header data-rec="R-007,R-004">
+  <div class="utility">
+    <div class="container utility__row">
+      <FutureLink class="utility__store" note="Вибір автомагазину з'явиться в повній версії">Автомагазин: Київ, Видубичі</FutureLink>
+      <ul class="utility__links" role="list">
+        {utility.map((u) => <li><FutureLink note={SOON}>{u}</FutureLink></li>)}
+        <li class="utility__lang"><span aria-current="true" lang="uk">UA</span><FutureLink note="Російська версія з'явиться пізніше"><span lang="ru">RU</span></FutureLink></li>
+      </ul>
+    </div>
+  </div>
+  <div class="bar">
+    <div class="container bar__row">
+      <Logo />
+      <nav class="mainnav" aria-label="Головне меню">
+        <ul role="list">
+          {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+        </ul>
+      </nav>
+      <a class="bar__phone" href={mainPhone.href}>
+        <Icon name="phone" size={22} />
+        <span class="bar__phone-text"><strong>{mainPhone.label}</strong><span class="bar__hours">{hours}</span></span>
+      </a>
+      <ul class="shop" role="list">
+        {shop.map((s) => <li><FutureLink class="shop__item" note={SOON}><Icon name={s.icon} /><span>{s.label}</span></FutureLink></li>)}
+      </ul>
+      <a class="bar__call btn btn--ink" href={mainPhone.href}><Icon name="phone" size={20} /><span>Подзвонити</span></a>
+      <details class="mmenu" data-mmenu>
+        <summary class="mmenu__toggle"><Icon name="menu" class="mmenu__open" /><Icon name="close" class="mmenu__close" /><span>Меню</span></summary>
+        <div class="mmenu__panel">
+          <nav aria-label="Меню розділів">
+            <ul class="mmenu__nav" role="list">
+              {nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+            </ul>
+          </nav>
+          <ul class="mmenu__shop" role="list">
+            {shop.map((s) => <li><FutureLink class="shop__item" note={SOON}><Icon name={s.icon} /><span>{s.label}</span></FutureLink></li>)}
+          </ul>
+          <div class="mmenu__phones">
+            {phones.map((p) => <a href={p.href}>{p.label}</a>)}
+            <span class="mmenu__hours">{hours}</span>
+          </div>
+          <ul class="mmenu__util" role="list">
+            {utility.map((u) => <li><FutureLink note={SOON}>{u}</FutureLink></li>)}
+            <li><FutureLink note="Вибір автомагазину з'явиться в повній версії">Автомагазин: Київ, Видубичі</FutureLink></li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+</header>
+
+<script>
+  // Header shrink after 80 px (transform/opacity only) and closing the mobile menu after an anchor tap.
+  const header = document.querySelector<HTMLElement>("[data-header]");
+  const menu = document.querySelector<HTMLDetailsElement>("[data-mmenu]");
+  if (header) {
+    let ticking = false;
+    const update = () => {
+      header.classList.toggle("is-compact", window.scrollY > 80);
+      ticking = false;
+    };
+    window.addEventListener("scroll", () => {
+      if (!ticking) { ticking = true; requestAnimationFrame(update); }
+    }, { passive: true });
+    update();
+  }
+  if (menu) {
+    menu.addEventListener("click", (e) => {
+      const a = (e.target as HTMLElement).closest("a[href^='#']");
+      if (a) menu.open = false;
+    });
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && menu.open) { menu.open = false; menu.querySelector("summary")?.focus(); }
+    });
+  }
+</script>

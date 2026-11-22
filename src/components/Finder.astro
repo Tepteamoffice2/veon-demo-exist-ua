@@ -1,0 +1,93 @@
+---
+// The number plate search (signature). Visual only in this version: tabs switch, fields accept input,
+// the "Знайти" button is an inactive FutureLink with a visible hint and a real phone link (demo.md §6).
+import Icon from "./Icon.astro";
+import FutureLink from "./FutureLink.astro";
+import { mainPhone, brands } from "../data/site";
+const NOTE = "Пошук запрацює в повній версії сайту";
+---
+<div class="finder" data-finder data-rec="R-002">
+  <div class="finder__tabs" role="tablist" aria-label="Спосіб пошуку">
+    <button class="finder__tab" type="button" role="tab" id="tab-plate" aria-controls="panel-plate" aria-selected="true">Держномер</button>
+    <button class="finder__tab" type="button" role="tab" id="tab-vin" aria-controls="panel-vin" aria-selected="false" tabindex="-1">VIN<span class="finder__vin-more"> / артикул</span><span class="finder__vin-short" aria-hidden="true"> / арт.</span></button>
+    <button class="finder__tab" type="button" role="tab" id="tab-car" aria-controls="panel-car" aria-selected="false" tabindex="-1">Марка<span class="finder__more">, модель, рік</span></button>
+  </div>
+
+  <div class="finder__stage">
+    <div class="plate is-active" role="tabpanel" id="panel-plate" aria-labelledby="tab-plate">
+      <div class="plate__strip" aria-hidden="true"><span class="plate__flag"></span><span class="plate__code">UA</span></div>
+      <label class="visually-hidden" for="q-plate">Держномер авто</label>
+      <input class="plate__input" id="q-plate" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="10" placeholder="АА 0000 АА" aria-describedby="finder-hint" />
+      <FutureLink class="plate__go" note={NOTE}><Icon name="search" size={22} /><span class="plate__go-text">Знайти</span></FutureLink>
+    </div>
+
+    <div class="plate plate--vin" role="tabpanel" id="panel-vin" aria-labelledby="tab-vin">
+      <div class="plate__strip plate__strip--vin" aria-hidden="true"><span class="plate__code">VIN</span></div>
+      <label class="visually-hidden" for="q-vin">VIN або артикул деталі</label>
+      <input class="plate__input plate__input--vin" id="q-vin" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" maxlength="17" placeholder="VIN або артикул" aria-describedby="finder-hint" />
+      <FutureLink class="plate__go" note={NOTE}><Icon name="search" size={22} /><span class="plate__go-text">Знайти</span></FutureLink>
+    </div>
+
+    <div class="plate plate--car" role="tabpanel" id="panel-car" aria-labelledby="tab-car">
+      <div class="plate__selects">
+        <label class="plate__field">
+          <span>Марка</span>
+          <select id="q-brand" aria-describedby="finder-hint">
+            <option value="">Оберіть марку</option>
+            {brands.map((b) => <option>{b}</option>)}
+          </select>
+        </label>
+        <label class="plate__field">
+          <span>Модель</span>
+          <select disabled><option>Спершу марка</option></select>
+        </label>
+        <label class="plate__field">
+          <span>Рік</span>
+          <select disabled><option>Спершу модель</option></select>
+        </label>
+      </div>
+      <FutureLink class="plate__go" note={NOTE}><Icon name="search" size={22} /><span class="plate__go-text">Знайти</span></FutureLink>
+    </div>
+  </div>
+
+  <p class="finder__hint" id="finder-hint">{NOTE}. Поки що підберемо деталь телефоном: <a href={mainPhone.href}>{mainPhone.label}</a></p>
+</div>
+
+<script>
+  // Accessible tabs (WAI-ARIA tabs pattern) with a clip-path swap; reduced motion swaps instantly via CSS.
+  document.querySelectorAll<HTMLElement>("[data-finder]").forEach((root) => {
+    const tabs = Array.from(root.querySelectorAll<HTMLButtonElement>("[role=tab]"));
+    const select = (tab: HTMLButtonElement, focus = false) => {
+      tabs.forEach((t) => {
+        const on = t === tab;
+        t.setAttribute("aria-selected", String(on));
+        t.tabIndex = on ? 0 : -1;
+        const panel = root.querySelector<HTMLElement>("#" + t.getAttribute("aria-controls"));
+        if (!panel) return;
+        panel.classList.toggle("is-active", on);
+        if (on) {
+          panel.classList.remove("is-entering");
+          void panel.offsetWidth;
+          panel.classList.add("is-entering");
+        }
+      });
+      if (focus) tab.focus();
+    };
+    tabs.forEach((tab, i) => {
+      tab.addEventListener("click", () => select(tab));
+      tab.addEventListener("keydown", (e) => {
+        const map: Record<string, number> = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 };
+        if (!(e.key in map)) return;
+        e.preventDefault();
+        select(tabs[(map[e.key] + tabs.length) % tabs.length], true);
+      });
+    });
+    root.querySelectorAll<HTMLInputElement>(".plate__input").forEach((input) => {
+      input.addEventListener("input", () => {
+        const pos = input.selectionStart;
+        input.value = input.value.toUpperCase();
+        if (pos !== null) input.setSelectionRange(pos, pos);
+      });
+    });
+  });
+</script>

@@ -1,0 +1,19 @@
+---
+// Text/SVG reconstruction of the EXIST.UA mark: gear ring with the letter "e" and the wordmark.
+// Replace with the client's vector logo when it arrives (R-015, client decision).
+interface Props { href?: string; }
+const { href = "#top" } = Astro.props;
+const teeth = Array.from({ length: 10 }, (_, i) => i * 36);
+---
+<a class="logo" href={href} aria-label="EXIST.UA, на початок сторінки">
+  <svg class="logo__mark" viewBox="0 0 48 48" width="40" height="40" aria-hidden="true" focusable="false">
+    <g class="logo__gear">
+      {teeth.map((deg) => <rect x="21" y="1.5" width="6" height="8" rx="1.2" transform={`rotate(${deg} 24 24)`} />)}
+      <circle cx="24" cy="24" r="17" />
+    </g>
+    <circle class="logo__hole" cx="24" cy="24" r="12.5" />
+    <path class="logo__e" d="M15.5 24.6h17a8.6 8.6 0 1 0-2.4 6.2" />
+    <path class="logo__e logo__e--flag" d="M18.6 21h11.2" />
+  </svg>
+  <span class="logo__word">EXIST.UA</span>
+</a>

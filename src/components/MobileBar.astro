@@ -1,0 +1,11 @@
+---
+import Icon from "./Icon.astro";
+import FutureLink from "./FutureLink.astro";
+import { mainPhone, SOON } from "../data/site";
+---
+<nav class="mbar" aria-label="Швидкі дії" data-rec="R-004">
+  <a class="mbar__item" href="#katalog"><Icon name="grid" /><span>Каталог</span></a>
+  <a class="mbar__item" href="#poshuk"><Icon name="search" /><span>Пошук</span></a>
+  <a class="mbar__item mbar__item--call" href={mainPhone.href}><Icon name="phone" /><span>Подзвонити</span></a>
+  <FutureLink class="mbar__item" note={SOON}><Icon name="cart" /><span>Кошик</span></FutureLink>
+</nav>

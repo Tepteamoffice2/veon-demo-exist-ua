@@ -1,0 +1,238 @@
+---
+// EXIST.UA homepage (design/concept.md): sections poshuk, to, katalog, marky, servisy, merezha, aktsii, zastosunok, kontakty.
+import Base from "../layouts/Base.astro";
+import Section from "../components/Section.astro";
+import Header from "../components/Header.astro";
+import MobileBar from "../components/MobileBar.astro";
+import Finder from "../components/Finder.astro";
+import FutureLink from "../components/FutureLink.astro";
+import Icon from "../components/Icon.astro";
+import Logo from "../components/Logo.astro";
+import MiniPlate from "../components/MiniPlate.astro";
+import "../styles/site.css";
+import { phones, mainPhone, hours, appStore, socials, maintenance, departments, brands, cities, SOON } from "../data/site";
+
+const title = "Автозапчастини за номером авто, VIN і артикулом | EXIST.UA";
+const description = "Інтернет-магазин автозапчастин з 2008 року: пошук за держномером, VIN, маркою. 40+ офісів по Україні, точна дата доставки. (067) 170-1-888";
+const footerLinks = ["Оплата", "Доставка", "Повернення та гарантія", "Допомога", "Блог", "Політика конфіденційності"];
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@type": "AutoPartsStore",
+  name: "EXIST.UA",
+  foundingDate: "2008",
+  telephone: phones.map((p) => p.href.replace("tel:", "")),
+  areaServed: "UA",
+  sameAs: socials.map((s) => s.href),
+};
+---
+<Base lang="uk" title={title} description={description}>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+  <Header slot="header" />
+
+  <div class="field">
+    <div class="container field__grid">
+      <Section id="poshuk" class="hero" rec="R-001,G-R001">
+        <div class="hero__head">
+          <h1 class="hero__title" data-rec="R-016,R-201,R-202">Запчастини за номером <span class="hero__nowrap">вашого авто</span></h1>
+          <p class="hero__lead">Оригінальні та aftermarket запчастини для 149 марок авто: підбираємо за держномером, VIN, артикулом або маркою.</p>
+        </div>
+        <div class="hero__plate">
+          <Finder />
+        </div>
+      </Section>
+
+      <Section id="to" class="to" rec="R-008">
+        <div class="to__row">
+        <h2 class="to__title">Планове ТО</h2>
+        <ul class="chips" role="list">
+          {maintenance.map((m) => <li><FutureLink class="chip" note={SOON}>{m}</FutureLink></li>)}
+        </ul>
+        <p class="to__help">Не знаєте, що брати? <a href={mainPhone.href}>Зателефонуйте</a>, підберемо.</p>
+        </div>
+      </Section>
+
+        <aside class="call" aria-labelledby="call-title" data-rec="R-004">
+          <div class="call__title" id="call-title">Підберемо по телефону</div>
+          <a class="call__main" href={mainPhone.href}>
+            <Icon name="phone" size={26} />
+            <span><span class="call__verb">Подзвонити </span>{mainPhone.label}</span>
+          </a>
+          <p class="call__hours">{hours}</p>
+          <p class="call__more">Також <a href={phones[1].href}>{phones[1].label}</a> і <a href={phones[2].href}>{phones[2].label}</a></p>
+          <p class="call__note">Консультант перевірить, чи підійде деталь саме до вашого авто.</p>
+        </aside>
+    </div>
+  </div>
+
+  <Section id="katalog" class="katalog" rec="R-008">
+    <div class="container katalog__grid">
+      <div class="katalog__head">
+        <h2 class="h2">Сім відділів магазину</h2>
+        <p class="muted">Номера авто під рукою немає? Почніть з відділу, а підбір під вашу машину зробить консультант.</p>
+        <div class="katalog__key">
+          <p class="katalog__key-title">Знаєте номер авто? З ним шлях коротший.</p>
+          <MiniPlate mode="link" />
+          <p class="katalog__key-call">Або назвіть номер консультанту: <a href={mainPhone.href}>{mainPhone.label}</a></p>
+        </div>
+      </div>
+      <ol class="index" role="list">
+        {departments.map((d, i) => (
+          <li class="index__row" data-reveal style={`--reveal-delay:${i * 40}ms`}>
+            <h3 class="index__name">
+              <FutureLink class="index__link" note={SOON}>
+                <span class="index__num" aria-hidden="true">{String(i + 1).padStart(2, "0")}</span>
+                <span class="index__text">{d}</span>
+                <Icon name="arrow" class="index__arrow" size={28} />
+              </FutureLink>
+            </h3>
+          </li>
+        ))}
+      </ol>
+    </div>
+  </Section>
+
+  <Section id="marky" class="marky">
+    <div class="container">
+      <div class="marky__head">
+        <div>
+          <h2 class="h2">149 марок авто в каталозі</h2>
+          <p class="muted">Не пам'ятаєте номер чи VIN? Оберіть марку, далі модель і рік.</p>
+        </div>
+        <div class="marky__filter" data-brand-filter-box>
+          <label for="brand-filter">Знайти марку</label>
+          <input id="brand-filter" type="search" autocomplete="off" spellcheck="false" placeholder="Наприклад, Kia" aria-describedby="brand-empty" data-brand-filter />
+        </div>
+      </div>
+      <ul class="wall" role="list" data-brand-wall>
+        {brands.map((b, i) => (
+          <li data-reveal data-brand={b.toLowerCase()} style={`--reveal-delay:${i * 40}ms`}><FutureLink class="wall__brand" note={SOON}>{b}</FutureLink></li>
+        ))}
+        <li data-reveal style={`--reveal-delay:${brands.length * 40}ms`}><FutureLink class="wall__all" note={SOON}>Усі 149 марок <Icon name="arrow" size={22} /></FutureLink></li>
+      </ul>
+      <p class="marky__empty" id="brand-empty" role="status" data-brand-empty></p>
+    </div>
+  </Section>
+
+  <Section id="servisy" class="servisy dark" rec="R-009">
+    <div class="container">
+      <h2 class="h2 servisy__title">Коли потрібна не тільки деталь</h2>
+      <div class="servisy__grid">
+        <article class="assist">
+          <p class="assist__big" aria-hidden="true">24/7</p>
+          <h3 class="assist__title">Допомога в дорозі 24/7</h3>
+          <p class="assist__text">Коли авто зупинилося на трасі чи у місті, вдень або вночі.</p>
+          <FutureLink class="btn btn--plate" note={SOON}>Як працює допомога</FutureLink>
+        </article>
+        <ul class="svc" role="list">
+          <li class="svc__item">
+            <h3 class="svc__title"><FutureLink class="svc__link" note={SOON}><span>Страхування авто</span><Icon name="arrow" class="svc__arrow" /></FutureLink></h3>
+            <p>ОСАГО, КАСКО та Зелена картка для поїздок за кордон.</p>
+          </li>
+          <li class="svc__item">
+            <h3 class="svc__title"><FutureLink class="svc__link" note={SOON}><span>Мережа СТО</span><Icon name="arrow" class="svc__arrow" /></FutureLink></h3>
+            <p>Перевірені партнерські СТО по всій Україні, де встановлять куплену деталь.</p>
+          </li>
+          <li class="svc__item">
+            <h3 class="svc__title">Консультації експертів</h3>
+            <p>Допоможемо з вибором запчастин і сервісів: <a href={mainPhone.href}>{mainPhone.label}</a></p>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </Section>
+
+  <Section id="merezha" class="merezha" rec="R-011">
+    <div class="container">
+      <div class="merezha__top">
+        <h2 class="h2">Поруч у 23 містах України</h2>
+        <dl class="facts">
+          <div class="facts__item"><dt>з 2008</dt><dd>працюємо для водіїв</dd></div>
+          <div class="facts__item"><dt>40+</dt><dd>офісів продажу в містах України</dd></div>
+          <div class="facts__item"><dt>Дата і час</dt><dd>точний термін доставки замовлення</dd></div>
+        </dl>
+      </div>
+      <ul class="board" role="list" aria-label="Міста, де є автомагазини EXIST.UA">
+        {cities.map((c) => <li>{c}</li>)}
+      </ul>
+      <div class="merezha__links">
+        <FutureLink class="btn btn--ink" note={SOON}>Адреси автомагазинів</FutureLink>
+        <FutureLink class="btn btn--line" note={SOON}>Умови доставки</FutureLink>
+      </div>
+    </div>
+  </Section>
+
+  <div class="duo">
+    <div class="container duo__grid">
+      <Section id="aktsii" class="promo" rec="R-013">
+        <h2 class="h3">Акції з призами та кешбеком від брендів</h2>
+        <p class="muted">Розіграші та кешбек від виробників запчастин і автотоварів. Умови й терміни на сторінці кожної акції.</p>
+        <FutureLink class="btn btn--line" note={SOON}>Усі акції</FutureLink>
+      </Section>
+      <Section id="zastosunok" class="app">
+        <h2 class="h3">Застосунок EXIST.UA</h2>
+        <p class="muted">Замовлення і точний термін доставки завжди в телефоні.</p>
+        <a class="btn btn--ink" href={appStore} target="_blank" rel="noopener"><Icon name="app" size={20} /><span>Завантажити в App Store</span></a>
+      </Section>
+    </div>
+  </div>
+
+  <Section id="kontakty" class="close dark">
+    <div class="container">
+      <h2 class="close__title">Не знайшли деталь? Підберемо за номером авто</h2>
+      <p class="close__lead">Назвіть консультанту держномер або VIN, і ми перевіримо сумісність та наявність.</p>
+      <div class="close__plate">
+        <MiniPlate mode="field" id="q-plate-close" dark hint="Пошук запрацює в повній версії сайту. Поки що продиктуйте номер консультанту за одним із телефонів нижче." />
+      </div>
+      <ul class="close__phones" role="list">
+        {phones.map((p) => <li><a href={p.href}>{p.label}</a></li>)}
+      </ul>
+      <p class="close__hours">{hours}</p>
+      <p class="close__tg">Пишіть у Telegram: <a href="https://t.me/exist_ua" target="_blank" rel="noopener">@exist_ua</a></p>
+    </div>
+  </Section>
+
+  <footer slot="footer" class="footer dark">
+    <div class="container footer__grid">
+      <div class="footer__about">
+        <Logo />
+        <p>EXIST.UA працює з 2008 року: оригінальні та сумісні запчастини, консультації досвідчених фахівців, допомога на дорозі й контакти партнерських СТО.</p>
+      </div>
+      <nav class="footer__col" aria-label="Покупцям">
+        <h2 class="footer__h">Покупцям</h2>
+        <ul role="list">
+          {footerLinks.map((l) => <li><FutureLink note={SOON}>{l}</FutureLink></li>)}
+        </ul>
+      </nav>
+      <div class="footer__col" data-rec="S-R010">
+        <h2 class="footer__h">Ми в соцмережах</h2>
+        <ul role="list">
+          {socials.map((s) => <li><a href={s.href} target="_blank" rel="noopener">{s.label}</a></li>)}
+        </ul>
+      </div>
+    </div>
+    <div class="container footer__base">
+      <p>© 2008–2026 EXIST.UA</p>
+      <p>Автомагазин: Київ, Видубичі</p>
+    </div>
+  </footer>
+  <MobileBar slot="footer" />
+</Base>
+
+<script>
+  // Local brand filter: works on the page without a server.
+  const input = document.querySelector<HTMLInputElement>("[data-brand-filter]");
+  const items = Array.from(document.querySelectorAll<HTMLElement>("[data-brand]"));
+  const empty = document.querySelector<HTMLElement>("[data-brand-empty]");
+  input?.addEventListener("input", () => {
+    const q = input.value.trim().toLowerCase();
+    let shown = 0;
+    items.forEach((li) => {
+      const hit = !q || (li.dataset.brand ?? "").includes(q);
+      li.hidden = !hit;
+      if (hit) shown += 1;
+    });
+    if (empty) empty.textContent = shown ? "" : "Серед популярних такої марки немає. Повний список марок з'явиться в каталозі, а поки підберемо деталь за телефоном (067) 170-1-888.";
+  });
+</script>
